@@ -1,39 +1,57 @@
 class Solution {
     
-    private int[][] graph;
-    private boolean[] visited;
-    int len;
+    private int[] root;
+    private int[] rank;
+    int n;
 
     public int findCircleNum(int[][] isConnected) {
-        var cnt = 0;
-        len = isConnected.length;
-        graph = isConnected;
+        n = isConnected.length;
+        var cnt = n;
+        root = new int[n];
+        rank = new int[n];
 
-        visited = new boolean[len];
-        for(int i = 0; i < len ; i++) {
-            if(visited[i])
-                continue;
-            
-            DFS(i);
-            cnt++;
+        for(int i = 0; i < n; i++) {
+            root[i] = i;
+            rank[i] = 1;
         }
-
-
+        
+        for(int i = 0; i < n; i++) {
+            for(int j = i + 1; j < n; j++) {
+                if(isConnected[i][j] == 1) {
+                    if(find(i) != find(j)) {
+                        union(i, j);
+                        cnt--;   
+                    }
+                }
+            }
+        }
+        
         return cnt;    
     }
 
-    private void DFS(int node) {
-
-        for(int i = 0; i < len; i++) {
-            if(node == i)
-                continue;
-
-            if(graph[node][i] == 1 && !visited[i]) {
-                visited[i] = true;
-                DFS(i);
+    int find(int x) {
+        if(root[x] != x)
+            while(root[x] != x) {
+                x = root[x];
             }
-
-        }
+        return x;
     }
+    
+    void union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        
+        if(rootX != rootY) {
+            if(rank[rootX] > rank[rootY]){
+                root[rootY] = rootX;
+            } else if(rank[rootX] < rank[rootY]) {
+                root[rootX] = rootY;
+            }
+            else {
+                root[rootY] = rootX;
+                rank[rootX] += 1;
+            }
+        }
 
+    }
 }
