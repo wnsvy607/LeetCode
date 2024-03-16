@@ -1,29 +1,30 @@
 class Solution {
     
-    int m, n;
-    int[][] dp;
+    private int[][] og; 
     
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        m = obstacleGrid.length;
-        n = obstacleGrid[0].length;
-        dp = new int[m][n];
+        og = obstacleGrid;
+        int m = og.length;
+        int n = og[0].length;
+        int[][] dp = new int[m+1][n+1];
+
+        dp[1][1] = isObstcaleOn(1, 1) ? 0 : 1;
         
-        for(int i = 0; i < n; i++) {
-            if(obstacleGrid[0][i] == 1)
-                break;
-            dp[0][i] = 1;            
-        }
-        
-        for(int i = 1; i < m; i++) {
-            if(obstacleGrid[i][0] == 0)
-                dp[i][0] = dp[i - 1][0];
-            for(int j = 1; j < n; j++) {
-                if(obstacleGrid[i][j] == 1)
+        for(int i = 1; i <= m; i++) {
+            for(int j = 1; j <= n; j++) {
+                if(isObstcaleOn(i, j))
                     continue;
-                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                dp[i][j] += isObstcaleOn(i, j-1) ? 0 : dp[i][j-1];    
+                dp[i][j] += isObstcaleOn(i-1, j) ? 0 : dp[i-1][j];
             }
         }
         
-        return dp[m - 1][n - 1];
+        
+        return dp[m][n];
     }
+    
+    private boolean isObstcaleOn(int i, int j) {
+        return i < 1 || j < 1 || og[i-1][j-1] == 1;
+    }
+    
 }
