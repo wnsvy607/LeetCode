@@ -1,38 +1,25 @@
-class Solution {
-    
-    boolean[][] dp;
-    
-    public String longestPalindrome(String s) {
-        int len = s.length();
-        dp = new boolean[len][len];
-        String answer = "";
-        
-        for(int i = 0; i < len; i++) {
-            for(int j = 0; i + j < len; j++) {
-                String target = s.substring(j, j + i + 1);
-                if(isPalindrome(target, j, j+i)) {
-                    dp[j][j+i] = true;
-                    answer = target;                  
-                }
-            }
-        }
-        
-        return answer;
+public class Solution {
+private int lo, maxLen;
+
+public String longestPalindrome(String s) {
+	int len = s.length();
+	if (len < 2)
+		return s;
+	
+    for (int i = 0; i < len-1; i++) {
+     	extendPalindrome(s, i, i);  //assume odd length, try to extend Palindrome as possible
+     	extendPalindrome(s, i, i+1); //assume even length.
     }
-    
-    
-    boolean isPalindrome(String tar, int start, int end) {
-        if(start == end)
-            return true;
-        
-        if(end - start == 1) {
-            return tar.charAt(0) == tar.charAt(1);
-        }
-        
-        
-        if(tar.charAt(0) == tar.charAt(tar.length() - 1))
-            return dp[start+1][end-1];
-        
-        return false;
-    }
+    return s.substring(lo, lo + maxLen);
 }
+
+private void extendPalindrome(String s, int j, int k) {
+	while (j >= 0 && k < s.length() && s.charAt(j) == s.charAt(k)) {
+		j--;
+		k++;
+	}
+	if (maxLen < k - j - 1) {
+		lo = j + 1;
+		maxLen = k - j - 1;
+	}
+}}
